@@ -76,6 +76,21 @@
             justify-content: flex-end;
             padding: 0.5rem;
         }
+
+        /* === BOTÓN FLOTANTE INSTALAR APP (EXACTO COMO EN TU IMAGEN) === */
+        .btn-install-app {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #a4c7e6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 18px;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
@@ -393,6 +408,34 @@
                 navigator.serviceWorker.register('./sw.js')
             });
         }
+    </script>
+
+    <!-- === BOTÓN FLOTANTE INSTALAR APP === -->
+    <button id="btnInstalar" class="btn-install-app d-none">Instalar app</button>
+
+    <!-- === SCRIPT PARA INSTALAR PWA === -->
+    <script>
+        let deferredPrompt;
+        const btnInstalar = document.getElementById('btnInstalar');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            btnInstalar.classList.remove('d-none');
+        });
+
+        btnInstalar.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+
+            deferredPrompt.prompt();
+            const choice = await deferredPrompt.userChoice;
+
+            if (choice.outcome === 'accepted') {
+                btnInstalar.classList.add('d-none');
+            }
+
+            deferredPrompt = null;
+        });
     </script>
 
 </body>
